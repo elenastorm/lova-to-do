@@ -6,6 +6,9 @@ import { getWeightLevel } from "@/lib/weight";
 import { ItemCheckbox } from "@/components/ItemCheckbox";
 import { DeleteButton } from "@/components/DeleteButton";
 
+// Отключаем кэширование — страница всегда показывает актуальные данные из БД
+export const dynamic = "force-dynamic";
+
 type Props = { params: Promise<{ id: string }> };
 
 export default async function ItemPage({ params }: Props) {

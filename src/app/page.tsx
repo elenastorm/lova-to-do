@@ -3,6 +3,9 @@ import { Cat } from "@/components/Cat";
 import { AddItemModal } from "@/components/AddItemModal";
 import { ItemList } from "@/components/ItemList";
 
+// Отключаем кэширование — страница всегда показывает актуальные данные из БД
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const items = await prisma.todoItem.findMany({
     orderBy: { createdAt: "asc" },
