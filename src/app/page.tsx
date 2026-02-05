@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { Cat } from "@/components/Cat";
 import { AddItemModal } from "@/components/AddItemModal";
@@ -20,12 +21,23 @@ export default async function HomePage() {
   return (
     <main className="min-h-screen p-4 sm:p-6 lg:p-8 max-w-2xl mx-auto">
       <header className="mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text)]">
-          Ту ду лист пары
-        </h1>
-        <p className="text-[var(--text-muted)] mt-1">
-          Выполняйте дела — котик станет счастливее
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text)]">
+              Ту ду лист пары
+            </h1>
+            <p className="text-[var(--text-muted)] mt-1">
+              Выполняйте дела — котик станет счастливее
+            </p>
+          </div>
+          <Link
+            href="/gallery"
+            className="rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-[var(--text)] hover:bg-[var(--accent-pale)] flex items-center gap-1.5"
+          >
+            <span>📸</span>
+            <span className="hidden sm:inline">Галерея</span>
+          </Link>
+        </div>
       </header>
 
       <section className="mb-8">

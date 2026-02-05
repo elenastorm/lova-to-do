@@ -55,7 +55,7 @@ export function ItemList({ items }: ItemListProps) {
             key={item.id}
             className={`rounded-xl bg-[var(--bg-card)] border border-[var(--border)] p-4 flex items-center gap-4 item-row ${item.completed ? "item-row--completed" : ""}`}
           >
-            <ItemCheckbox id={item.id} completed={item.completed} />
+            <ItemCheckbox id={item.id} title={item.title} completed={item.completed} />
             <span className="text-xl shrink-0" aria-hidden>
               {getItemEmoji(item.id)}
             </span>
