@@ -1,0 +1,27 @@
+# dependencies
+node_modules
+.pnp
+.pnp.*
+npm-debug.log*
+
+# next
+.next
+out
+
+# misc
+.git
+.gitignore
+.dockerignore
+.env
+.env.*
+!.env.example
+*.md
+.DS_Store
+
+# prisma (migrations copy in Dockerfile; ignore local DB)
+*.db
+*.db-journal
+
+# ide
+.vscode
+.idea

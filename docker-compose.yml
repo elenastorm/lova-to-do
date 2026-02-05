@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "file:/data/prisma/dev.db"
+    volumes:
+      - lova-todo-data:/data
+
+volumes:
+  lova-todo-data:

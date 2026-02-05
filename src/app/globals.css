@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #fff5f5;
+  --bg-card: #fff0f2;
+  --accent: #ec4899;
+  --accent-soft: #f472b6;
+  --accent-pale: #fce7f3;
+  --text: #831843;
+  --text-muted: #9d174d;
+  --border: #fbcfe8;
+  --foreground: #831843;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-card: var(--bg-card);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-pale: var(--accent-pale);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-border: var(--border);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--bg);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Анимация галочки при выполнении пункта */
+@keyframes checkPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.item-checkbox__check {
+  animation: checkPop 0.35s ease-out;
+}
+
+/* Плавное появление перечёркивания строки */
+.item-row--completed .item-checkbox__check {
+  animation: none;
+}
+
+/* Летающие сердечки и поцелуи при выполнении пункта */
+@keyframes celebrationUp {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(-120vh) rotate(20deg);
+    opacity: 0;
+  }
+}
+
+@keyframes celebrationDiag {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(-110vh) translateX(35vw) rotate(-15deg);
+    opacity: 0;
+  }
+}
+
+@keyframes celebrationAcross {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(-80vh) translateX(-70vw) rotate(10deg);
+    opacity: 0;
+  }
+}
+
+.celebration-emoji.animate-celebration-fly {
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  animation-iteration-count: 1;
+}
+
+.celebration-emoji[data-axis="up"] {
+  animation-name: celebrationUp;
+}
+
+.celebration-emoji[data-axis="diag"] {
+  animation-name: celebrationDiag;
+}
+
+.celebration-emoji[data-axis="across"] {
+  animation-name: celebrationAcross;
+}

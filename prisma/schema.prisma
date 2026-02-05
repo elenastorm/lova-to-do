@@ -1,0 +1,24 @@
+// Lova To-Do — ту ду лист пары
+// https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model TodoItem {
+  id           String    @id @default(cuid())
+  title        String
+  description  String?
+  detailsType  String?   // 'instagram' | 'yandex_maps'
+  detailsUrl   String?
+  weight       Int       // 1..10
+  completed    Boolean   @default(false)
+  completedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
