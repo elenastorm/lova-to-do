@@ -1,6 +1,7 @@
 services:
   app:
     build: .
+    restart: always
     ports:
       - "3000:3000"
     environment:
@@ -10,3 +11,4 @@ services:
 
 volumes:
   lova-todo-data:
+    external: false
