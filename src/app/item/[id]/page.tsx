@@ -5,7 +5,6 @@ import { getItemEmoji } from "@/lib/emoji";
 import { getWeightLevel } from "@/lib/weight";
 import { ItemCheckbox } from "@/components/ItemCheckbox";
 import { DeleteButton } from "@/components/DeleteButton";
-import { PhotoUploadButton } from "@/components/PhotoUploadButton";
 
 // Отключаем кэширование — страница всегда показывает актуальные данные из БД
 export const dynamic = "force-dynamic";
@@ -14,10 +13,7 @@ type Props = { params: Promise<{ id: string }> };
 
 export default async function ItemPage({ params }: Props) {
   const { id } = await params;
-  const item = await prisma.todoItem.findUnique({
-    where: { id },
-    include: { photos: { orderBy: { createdAt: "desc" } } },
-  });
+  const item = await prisma.todoItem.findUnique({ where: { id } });
 
   if (!item) notFound();
 
@@ -32,7 +28,7 @@ export default async function ItemPage({ params }: Props) {
 
       <article className="rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] p-6">
         <div className="flex items-start gap-4 mb-4">
-          <ItemCheckbox id={item.id} title={item.title} completed={item.completed} />
+          <ItemCheckbox id={item.id} completed={item.completed} />
           <span className="text-3xl shrink-0" aria-hidden>
             {getItemEmoji(item.id)}
           </span>
@@ -90,39 +86,6 @@ export default async function ItemPage({ params }: Props) {
               )}
               {!item.detailsType && "Открыть ссылку"}
             </a>
-          </div>
-        )}
-
-        {/* Фотографии */}
-        {item.photos.length > 0 && (
-          <div className="mb-4">
-            <h2 className="text-sm font-medium text-[var(--text-muted)] mb-2">
-              📸 Фотографии ({item.photos.length})
-            </h2>
-            <div className="grid grid-cols-2 gap-2">
-              {item.photos.map((photo) => (
-                <a
-                  key={photo.id}
-                  href={`/api/photos/${photo.filename}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block aspect-square rounded-lg overflow-hidden hover:opacity-90 transition-opacity"
-                >
-                  <img
-                    src={`/api/photos/${photo.filename}`}
-                    alt="Фото"
-                    className="w-full h-full object-cover"
-                  />
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Кнопка добавить фото (только для выполненных) */}
-        {item.completed && (
-          <div className="mb-4">
-            <PhotoUploadButton todoItemId={item.id} todoTitle={item.title} />
           </div>
         )}
 

@@ -36,6 +36,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 ENV DATABASE_URL="file:/data/prisma/dev.db"
-ENV UPLOADS_DIR="/data/uploads"
 
-ENTRYPOINT ["/bin/sh", "-c", "mkdir -p /data/prisma /data/uploads && prisma migrate deploy --schema=./prisma/schema.prisma && node server.js"]
+ENTRYPOINT ["/bin/sh", "-c", "mkdir -p /data/prisma && prisma migrate deploy --schema=./prisma/schema.prisma && node server.js"]

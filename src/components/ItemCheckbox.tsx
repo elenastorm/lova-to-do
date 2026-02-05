@@ -4,19 +4,16 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toggleComplete } from "@/lib/actions";
 import { useCelebration } from "@/contexts/CelebrationContext";
-import { usePhotoUpload } from "@/contexts/PhotoUploadContext";
 
 type ItemCheckboxProps = {
   id: string;
-  title: string;
   completed: boolean;
 };
 
-export function ItemCheckbox({ id, title, completed }: ItemCheckboxProps) {
+export function ItemCheckbox({ id, completed }: ItemCheckboxProps) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const celebration = useCelebration();
-  const photoUpload = usePhotoUpload();
 
   const handleClick = () => {
     if (!completed) {
@@ -25,10 +22,6 @@ export function ItemCheckbox({ id, title, completed }: ItemCheckboxProps) {
     startTransition(async () => {
       await toggleComplete(id);
       router.refresh();
-      // После выполнения задачи — предложить загрузить фото
-      if (!completed) {
-        photoUpload.openUploadModal(id, title);
-      }
     });
   };
 
