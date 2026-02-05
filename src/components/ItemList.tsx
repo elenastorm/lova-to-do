@@ -4,12 +4,16 @@ import { useState } from "react";
 import Link from "next/link";
 import { ItemCheckbox } from "./ItemCheckbox";
 import { DeleteItemIconButton } from "./DeleteItemIconButton";
+import { EditItemModal } from "./EditItemModal";
 import { getItemEmoji } from "@/lib/emoji";
 import { getWeightLevel } from "@/lib/weight";
 
 type TodoItem = {
   id: string;
   title: string;
+  description: string | null;
+  detailsType: string | null;
+  detailsUrl: string | null;
   weight: number;
   completed: boolean;
   createdAt: Date;
@@ -23,6 +27,7 @@ const ITEMS_PER_PAGE = 15;
 
 export function ItemList({ items }: ItemListProps) {
   const [page, setPage] = useState(1);
+  const [editingItem, setEditingItem] = useState<TodoItem | null>(null);
 
   if (items.length === 0) {
     return (
@@ -71,6 +76,14 @@ export function ItemList({ items }: ItemListProps) {
                 {item.completed && " · выполнено ✓"}
               </span>
             </div>
+            <button
+              onClick={() => setEditingItem(item)}
+              className="rounded-lg border border-[var(--border)] px-2 py-1.5 sm:px-3 text-sm text-[var(--text)] hover:bg-[var(--accent-pale)] shrink-0"
+              title="Редактировать"
+            >
+              <span className="hidden sm:inline">Ред.</span>
+              <span className="sm:hidden">✏️</span>
+            </button>
             <Link
               href={`/item/${item.id}`}
               className="rounded-lg border border-[var(--border)] px-2 py-1.5 sm:px-3 text-sm text-[var(--text)] hover:bg-[var(--accent-pale)] shrink-0"
@@ -105,6 +118,14 @@ export function ItemList({ items }: ItemListProps) {
             →
           </button>
         </div>
+      )}
+
+      {/* Модальное окно редактирования */}
+      {editingItem && (
+        <EditItemModal
+          item={editingItem}
+          onClose={() => setEditingItem(null)}
+        />
       )}
     </div>
   );

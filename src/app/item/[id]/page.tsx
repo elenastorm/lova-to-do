@@ -5,6 +5,7 @@ import { getItemEmoji } from "@/lib/emoji";
 import { getWeightLevel } from "@/lib/weight";
 import { ItemCheckbox } from "@/components/ItemCheckbox";
 import { DeleteButton } from "@/components/DeleteButton";
+import { EditItemButton } from "@/components/EditItemButton";
 
 // Отключаем кэширование — страница всегда показывает актуальные данные из БД
 export const dynamic = "force-dynamic";
@@ -90,6 +91,16 @@ export default async function ItemPage({ params }: Props) {
         )}
 
         <div className="flex gap-3 pt-4 border-t border-[var(--border)]">
+          <EditItemButton
+            item={{
+              id: item.id,
+              title: item.title,
+              description: item.description,
+              detailsType: item.detailsType,
+              detailsUrl: item.detailsUrl,
+              weight: item.weight,
+            }}
+          />
           <DeleteButton itemId={item.id} />
         </div>
       </article>

@@ -67,3 +67,49 @@ export async function deleteItem(id: string): Promise<void> {
   revalidatePath("/");
   revalidatePath(`/item/${id}`);
 }
+
+export type UpdateItemState = { error?: string; success?: boolean };
+
+export async function updateItem(
+  _prev: UpdateItemState,
+  formData: FormData
+): Promise<UpdateItemState> {
+  const id = formData.get("id") as string;
+  if (!id) {
+    return { error: "ID не указан" };
+  }
+
+  const title = (formData.get("title") as string)?.trim();
+  if (!title || title.length < 1) {
+    return { error: "Введите название" };
+  }
+
+  const description = (formData.get("description") as string)?.trim() || null;
+  const detailsType = (formData.get("detailsType") as string) || null;
+  const detailsUrl = (formData.get("detailsUrl") as string)?.trim() || null;
+
+  let weight = Number(formData.get("weight"));
+  if (Number.isNaN(weight) || weight < WEIGHT_MIN || weight > WEIGHT_MAX) {
+    return { error: `Вес должен быть от ${WEIGHT_MIN} до ${WEIGHT_MAX}` };
+  }
+  weight = Math.round(weight);
+
+  if (detailsType && !DETAILS_TYPES.includes(detailsType as (typeof DETAILS_TYPES)[number])) {
+    return { error: "Недопустимый тип ссылки" };
+  }
+
+  await prisma.todoItem.update({
+    where: { id },
+    data: {
+      title,
+      description: description || null,
+      detailsType: detailsType || null,
+      detailsUrl: detailsUrl || null,
+      weight,
+    },
+  });
+
+  revalidatePath("/");
+  revalidatePath(`/item/${id}`);
+  return { success: true };
+}

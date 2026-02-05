@@ -43,6 +43,9 @@ export default async function HomePage() {
         <ItemList items={items.map((i: any) => ({
           id: i.id,
           title: i.title,
+          description: i.description,
+          detailsType: i.detailsType,
+          detailsUrl: i.detailsUrl,
           weight: i.weight,
           completed: i.completed,
           createdAt: i.createdAt,
