@@ -73,9 +73,11 @@ export function ItemList({ items }: ItemListProps) {
             </div>
             <Link
               href={`/item/${item.id}`}
-              className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm text-[var(--text)] hover:bg-[var(--accent-pale)] shrink-0"
+              className="rounded-lg border border-[var(--border)] px-2 py-1.5 sm:px-3 text-sm text-[var(--text)] hover:bg-[var(--accent-pale)] shrink-0"
+              title="Подробнее"
             >
-              Подробнее
+              <span className="hidden sm:inline">Подробнее</span>
+              <span className="sm:hidden">→</span>
             </Link>
             <DeleteItemIconButton itemId={item.id} />
           </li>
