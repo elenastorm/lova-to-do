@@ -1,5 +1,6 @@
 # Makefile для lova-to-do
 # Упрощает деплой и управление проектом
+# Поддерживает Docker и Podman
 
 # Конфигурация
 SERVER_IP = 130.49.149.176
@@ -7,20 +8,29 @@ SERVER_USER = root
 SERVER_PATH = /root/lova-to-do
 LOCAL_PATH = /Users/elmarshtupa/Vibe/lova-to-do/
 
+# Автоопределение: podman или docker
+# Локально (macOS) — используем podman, на сервере — тоже podman
+CONTAINER_CMD = $(shell command -v podman 2>/dev/null || echo docker)
+COMPOSE_CMD = $(CONTAINER_CMD) compose
+
 # Цвета для вывода
 GREEN = \033[0;32m
 YELLOW = \033[0;33m
 NC = \033[0m # No Color
 
-.PHONY: help dev commit push sync deploy update logs status stop start restart
+.PHONY: help dev build-local run-local stop-local commit push sync deploy update logs status stop start restart ssh
 
 # По умолчанию показываем справку
 help:
 	@echo ""
 	@echo "$(GREEN)🐱 Lova To-Do — команды$(NC)"
+	@echo "$(YELLOW)   Используется: $(CONTAINER_CMD)$(NC)"
 	@echo ""
 	@echo "  $(YELLOW)Локальная разработка:$(NC)"
-	@echo "    make dev          — запустить dev-сервер"
+	@echo "    make dev          — запустить dev-сервер (npm)"
+	@echo "    make build-local  — собрать контейнер локально"
+	@echo "    make run-local    — запустить контейнер локально"
+	@echo "    make stop-local   — остановить локальный контейнер"
 	@echo ""
 	@echo "  $(YELLOW)Git:$(NC)"
 	@echo "    make commit m=\"текст\"  — коммит с сообщением"
@@ -45,6 +55,19 @@ help:
 dev:
 	@echo "$(GREEN)🚀 Запуск dev-сервера...$(NC)"
 	npm run dev
+
+build-local:
+	@echo "$(GREEN)🔨 Сборка контейнера локально ($(CONTAINER_CMD))...$(NC)"
+	$(COMPOSE_CMD) build
+
+run-local:
+	@echo "$(GREEN)🚀 Запуск контейнера локально ($(CONTAINER_CMD))...$(NC)"
+	$(COMPOSE_CMD) up -d
+	@echo "$(GREEN)✅ Запущено на http://localhost:3000$(NC)"
+
+stop-local:
+	@echo "$(YELLOW)⏹️  Остановка локального контейнера...$(NC)"
+	$(COMPOSE_CMD) down
 
 # === Git ===
 
@@ -74,8 +97,8 @@ sync:
 		$(SERVER_USER)@$(SERVER_IP):$(SERVER_PATH)/
 
 deploy:
-	@echo "$(GREEN)🐳 Пересборка и запуск на сервере...$(NC)"
-	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && docker compose down && docker compose up -d --build"
+	@echo "$(GREEN)🐳 Пересборка и запуск на сервере (podman)...$(NC)"
+	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && podman compose down && podman compose up -d --build"
 	@echo "$(GREEN)✅ Деплой завершён!$(NC)"
 	@echo "$(YELLOW)🌐 Сайт: http://$(SERVER_IP):3000$(NC)"
 
@@ -97,23 +120,23 @@ endif
 
 logs:
 	@echo "$(GREEN)📋 Логи контейнера (Ctrl+C для выхода):$(NC)"
-	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && docker compose logs -f"
+	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && podman compose logs -f"
 
 status:
 	@echo "$(GREEN)📊 Статус контейнера:$(NC)"
-	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && docker compose ps"
+	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && podman compose ps"
 
 stop:
 	@echo "$(YELLOW)⏹️  Остановка контейнера...$(NC)"
-	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && docker compose down"
+	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && podman compose down"
 
 start:
 	@echo "$(GREEN)▶️  Запуск контейнера...$(NC)"
-	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && docker compose up -d"
+	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && podman compose up -d"
 
 restart:
 	@echo "$(YELLOW)🔄 Перезапуск контейнера...$(NC)"
-	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && docker compose restart"
+	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && podman compose restart"
 
 ssh:
 	@echo "$(GREEN)🔐 Подключение к серверу...$(NC)"
