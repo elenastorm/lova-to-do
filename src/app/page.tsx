@@ -8,10 +8,11 @@ export default async function HomePage() {
     orderBy: { createdAt: "asc" },
   });
 
-  const totalWeight = items.reduce((s, i) => s + i.weight, 0);
-  const completedWeight = items
-    .filter((i) => i.completed)
-    .reduce((s, i) => s + i.weight, 0);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const completed = items.filter((i: any) => i.completed);
+  const completedCount = completed.length;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const totalPoints = completed.reduce((sum: number, item: any) => sum + item.weight, 0);
 
   return (
     <main className="min-h-screen p-4 sm:p-6 lg:p-8 max-w-2xl mx-auto">
@@ -25,7 +26,7 @@ export default async function HomePage() {
       </header>
 
       <section className="mb-8">
-        <Cat totalWeight={totalWeight} completedWeight={completedWeight} />
+        <Cat completedCount={completedCount} totalPoints={totalPoints} />
       </section>
 
       <section>
@@ -35,7 +36,14 @@ export default async function HomePage() {
           </h2>
           <AddItemModal />
         </div>
-        <ItemList items={items} />
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        <ItemList items={items.map((i: any) => ({
+          id: i.id,
+          title: i.title,
+          weight: i.weight,
+          completed: i.completed,
+          createdAt: i.createdAt,
+        }))} />
       </section>
     </main>
   );

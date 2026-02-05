@@ -64,6 +64,7 @@ export function AddItemForm({ onSuccess }: AddItemFormProps) {
             <option value="">— не выбрано —</option>
             <option value="instagram">Instagram (видео)</option>
             <option value="yandex_maps">Яндекс.Карты (локация)</option>
+            <option value="other">Другое</option>
           </select>
         </div>
         <div>

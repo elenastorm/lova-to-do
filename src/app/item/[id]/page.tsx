@@ -73,6 +73,12 @@ export default async function ItemPage({ params }: Props) {
                   Открыть на карте
                 </>
               )}
+              {item.detailsType === "other" && (
+                <>
+                  <span aria-hidden>🔗</span>
+                  Открыть ссылку
+                </>
+              )}
               {!item.detailsType && "Открыть ссылку"}
             </a>
           </div>

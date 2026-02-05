@@ -5,35 +5,7 @@ import { prisma } from "@/lib/db";
 
 const WEIGHT_MIN = 1;
 const WEIGHT_MAX = 10;
-const DETAILS_TYPES = ["instagram", "yandex_maps"] as const;
-
-function isValidUrl(s: string): boolean {
-  try {
-    const u = new URL(s);
-    return u.protocol === "http:" || u.protocol === "https:";
-  } catch {
-    return false;
-  }
-}
-
-function isAllowedDetailsDomain(url: string, type: string): boolean {
-  try {
-    const host = new URL(url).hostname.toLowerCase();
-    if (type === "instagram") {
-      return host === "instagram.com" || host.endsWith(".instagram.com");
-    }
-    if (type === "yandex_maps") {
-      return (
-        host.includes("yandex") ||
-        host === "yandex.ru" ||
-        host.endsWith(".yandex.ru")
-      );
-    }
-    return false;
-  } catch {
-    return false;
-  }
-}
+const DETAILS_TYPES = ["instagram", "yandex_maps", "other"] as const;
 
 export type CreateItemState = { error?: string; success?: boolean };
 
@@ -56,22 +28,8 @@ export async function createItem(
   }
   weight = Math.round(weight);
 
-  if (detailsUrl && !detailsType) {
-    return { error: "Укажите тип ссылки (Instagram или Яндекс.Карты)" };
-  }
   if (detailsType && !DETAILS_TYPES.includes(detailsType as (typeof DETAILS_TYPES)[number])) {
     return { error: "Недопустимый тип ссылки" };
-  }
-  if (detailsUrl) {
-    if (!isValidUrl(detailsUrl)) {
-      return { error: "Укажите корректную ссылку" };
-    }
-    if (detailsType && !isAllowedDetailsDomain(detailsUrl, detailsType)) {
-      return {
-        error:
-          "Ссылка должна вести на Instagram или Яндекс.Карты в зависимости от выбранного типа",
-      };
-    }
   }
 
   await prisma.todoItem.create({

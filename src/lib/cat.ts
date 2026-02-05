@@ -1,28 +1,41 @@
-// Прогресс: сумма weight выполненных / сумма weight всех. 0/0 = 0%.
-// Стадии: 0% neutral, 1–24% sad, 25–59% hopeful, 60–89% happy, 90–100% very happy
+// Логика развития котиков:
+// 0 выполненных: 1 котик neutral
+// 1-2: 1 котик hopeful
+// 3-5: 1 котик happy
+// 6+: 1 котик very_happy → появляется второй котик
+//   6-7: 2й котик hopeful
+//   8-9: 2й котик happy
+//   10+: оба котика very_happy → вокруг появляются эмодзи
 
-export type CatStage = "neutral" | "sad" | "hopeful" | "happy" | "very_happy";
+export type CatStage = "neutral" | "hopeful" | "happy" | "very_happy";
 
-export function getProgress(
-  totalWeight: number,
-  completedWeight: number
-): number {
-  if (totalWeight <= 0) return 0;
-  return Math.round((completedWeight / totalWeight) * 100);
-}
-
-export function getCatStage(progress: number): CatStage {
-  if (progress <= 0) return "neutral";
-  if (progress < 25) return "sad";
-  if (progress < 60) return "hopeful";
-  if (progress < 90) return "happy";
+export function getCatStage(completedCount: number): CatStage {
+  if (completedCount <= 0) return "neutral";
+  if (completedCount <= 2) return "hopeful";
+  if (completedCount <= 5) return "happy";
   return "very_happy";
 }
 
+export function getSecondCatStage(completedCount: number): CatStage | null {
+  if (completedCount < 6) return null; // второй котик ещё не появился
+  if (completedCount <= 7) return "hopeful";
+  if (completedCount <= 9) return "happy";
+  return "very_happy";
+}
+
+export function hasBothCatsMaxed(completedCount: number): boolean {
+  return completedCount >= 10;
+}
+
 export const CAT_STAGE_LABELS: Record<CatStage, string> = {
-  neutral: "Пока нет дел — добавьте что-нибудь",
-  sad: "Мало выполнено — давайте сделаем больше!",
-  hopeful: "Уже лучше, продолжайте!",
+  neutral: "Пока ничего не выполнено — начните!",
+  hopeful: "Хорошее начало, продолжайте!",
   happy: "Отлично, вы молодцы!",
-  very_happy: "Вы супер! Котик счастлив",
+  very_happy: "Котик счастлив!",
+};
+
+export const DUAL_CAT_LABELS: Record<string, string> = {
+  one_max: "Первый котик счастлив! Появился друг",
+  both_growing: "Котики развиваются вместе!",
+  both_max: "Оба котика счастливы! Вы супер-пара!",
 };
