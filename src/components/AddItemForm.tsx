@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { createItem } from "@/lib/actions";
+import { WEIGHT_LEVELS, getWeightLevel } from "@/lib/weight";
 
 type AddItemFormProps = {
   onSuccess?: () => void;
@@ -9,6 +10,8 @@ type AddItemFormProps = {
 
 export function AddItemForm({ onSuccess }: AddItemFormProps) {
   const [state, formAction] = useActionState(createItem, {});
+  const [weight, setWeight] = useState(5);
+  const currentLevel = getWeightLevel(weight);
 
   useEffect(() => {
     if (state?.success) {
@@ -80,21 +83,56 @@ export function AddItemForm({ onSuccess }: AddItemFormProps) {
           />
         </div>
       </div>
+
+      {/* Шкала важности */}
       <div>
-        <label htmlFor="weight" className="block text-sm text-[var(--text-muted)] mb-1">
-          Вес (важность) от 1 до 10 *
+        <label className="block text-sm text-[var(--text-muted)] mb-2">
+          Уровень приключения *
         </label>
-        <input
-          id="weight"
-          name="weight"
-          type="number"
-          min={1}
-          max={10}
-          defaultValue={5}
-          required
-          className="w-full rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] max-w-[8rem]"
-        />
+        
+        {/* Слайдер */}
+        <div className="mb-3">
+          <input
+            type="range"
+            id="weight"
+            name="weight"
+            min={1}
+            max={10}
+            value={weight}
+            onChange={(e) => setWeight(Number(e.target.value))}
+            className="w-full h-2 bg-[var(--accent-pale)] rounded-lg appearance-none cursor-pointer accent-[var(--accent)]"
+          />
+          <div className="flex justify-between text-xs text-[var(--text-muted)] mt-1 px-1">
+            {WEIGHT_LEVELS.map((level) => (
+              <span
+                key={level.value}
+                className={`w-6 text-center ${weight === level.value ? "text-[var(--accent)] font-bold" : ""}`}
+              >
+                {level.value}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Карточка текущего уровня */}
+        <div className="rounded-xl bg-[var(--accent-pale)] border border-[var(--border)] p-3">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-2xl">{currentLevel.emoji}</span>
+            <div>
+              <span className="font-medium text-[var(--text)]">
+                {currentLevel.value}. {currentLevel.name}
+              </span>
+            </div>
+          </div>
+          <p className="text-sm text-[var(--text-muted)] mb-1">
+            {currentLevel.description}
+          </p>
+          <p className="text-xs text-[var(--text-muted)] italic">
+            Например: {currentLevel.example}
+          </p>
+        </div>
       </div>
+
       <button
         type="submit"
         className="w-full rounded-lg bg-[var(--accent)] text-white px-6 py-2.5 font-medium hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[var(--accent-soft)]"

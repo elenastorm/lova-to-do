@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ItemCheckbox } from "./ItemCheckbox";
 import { DeleteItemIconButton } from "./DeleteItemIconButton";
 import { getItemEmoji } from "@/lib/emoji";
+import { getWeightLevel } from "@/lib/weight";
 
 type TodoItem = {
   id: string;
@@ -66,8 +67,8 @@ export function ItemList({ items }: ItemListProps) {
                 {item.title}
               </Link>
               <span className="text-xs text-[var(--text-muted)]">
-                вес {item.weight}
-                {item.completed && " · выполнено"}
+                {getWeightLevel(item.weight).emoji} {getWeightLevel(item.weight).name}
+                {item.completed && " · выполнено ✓"}
               </span>
             </div>
             <Link

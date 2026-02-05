@@ -2,8 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { getItemEmoji } from "@/lib/emoji";
+import { getWeightLevel } from "@/lib/weight";
 import { ItemCheckbox } from "@/components/ItemCheckbox";
-import { deleteItem } from "@/lib/actions";
 import { DeleteButton } from "@/components/DeleteButton";
 
 type Props = { params: Promise<{ id: string }> };
@@ -35,7 +35,9 @@ export default async function ItemPage({ params }: Props) {
             >
               {item.title}
             </h1>
-            <p className="text-sm text-[var(--text-muted)]">Вес: {item.weight}</p>
+            <p className="text-sm text-[var(--text-muted)]">
+              {getWeightLevel(item.weight).emoji} {getWeightLevel(item.weight).name} ({item.weight}/10)
+            </p>
           </div>
         </div>
 
