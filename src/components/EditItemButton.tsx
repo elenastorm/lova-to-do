@@ -23,9 +23,9 @@ export function EditItemButton({ item }: EditItemButtonProps) {
     <>
       <button
         onClick={() => setIsEditing(true)}
-        className="flex-1 rounded-lg border border-[var(--border)] px-6 py-2.5 font-medium text-[var(--text)] hover:bg-[var(--accent-pale)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-soft)]"
+        className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--border)] px-6 py-2.5 font-medium text-[var(--text)] hover:bg-[var(--accent-pale)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-soft)]"
       >
-        Редактировать
+        ✏️ Редактировать
       </button>
 
       {isEditing && (

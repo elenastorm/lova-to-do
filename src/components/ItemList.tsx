@@ -78,20 +78,11 @@ export function ItemList({ items }: ItemListProps) {
             </div>
             <button
               onClick={() => setEditingItem(item)}
-              className="rounded-lg border border-[var(--border)] px-2 py-1.5 sm:px-3 text-sm text-[var(--text)] hover:bg-[var(--accent-pale)] shrink-0"
+              className="rounded-lg p-1.5 text-lg text-[var(--text-muted)] hover:text-[var(--accent)] hover:bg-[var(--accent-pale)] shrink-0 transition-colors"
               title="Редактировать"
             >
-              <span className="hidden sm:inline">Ред.</span>
-              <span className="sm:hidden">✏️</span>
+              ✏️
             </button>
-            <Link
-              href={`/item/${item.id}`}
-              className="rounded-lg border border-[var(--border)] px-2 py-1.5 sm:px-3 text-sm text-[var(--text)] hover:bg-[var(--accent-pale)] shrink-0"
-              title="Подробнее"
-            >
-              <span className="hidden sm:inline">Подробнее</span>
-              <span className="sm:hidden">→</span>
-            </Link>
             <DeleteItemIconButton itemId={item.id} />
           </li>
         ))}
