@@ -99,7 +99,7 @@ sync:
 
 deploy:
 	@echo "$(GREEN)🐳 Пересборка и запуск на сервере (podman)...$(NC)"
-	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && podman compose down && podman rmi localhost/lova-to-do_app:latest --force 2>/dev/null; true && podman compose build --no-cache --build-arg BUILD_ID=$$(date +%s) && podman compose up -d"
+	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && podman compose down; podman rm -f lova-to-do_app_1 2>/dev/null; true && podman rmi localhost/lova-to-do_app:latest --force 2>/dev/null; true && podman compose build --no-cache --build-arg BUILD_ID=$$(date +%s) && podman compose up -d"
 	@echo "$(GREEN)✅ Деплой завершён!$(NC)"
 	@echo "$(YELLOW)🌐 Сайт: http://$(SERVER_IP):3000$(NC)"
 
@@ -114,7 +114,7 @@ deploy-local: sync
 	@echo "$(GREEN)📤 Копирование образа на сервер...$(NC)"
 	scp $(IMAGE_TAR) $(SERVER_USER)@$(SERVER_IP):$(SERVER_PATH)/
 	@echo "$(GREEN)🐳 Загрузка образа и запуск на сервере...$(NC)"
-	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && podman load -i $(IMAGE_TAR) && rm -f $(IMAGE_TAR) && podman compose down && podman compose up -d --no-build"
+	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && podman load -i $(IMAGE_TAR) && rm -f $(IMAGE_TAR) && podman compose down; podman rm -f lova-to-do_app_1 2>/dev/null; true && podman compose up -d --no-build"
 	@rm -f $(IMAGE_TAR)
 	@echo "$(GREEN)✅ Деплой завершён!$(NC)"
 	@echo "$(YELLOW)🌐 Сайт: http://$(SERVER_IP):3000$(NC)"
