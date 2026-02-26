@@ -18,7 +18,7 @@ GREEN = \033[0;32m
 YELLOW = \033[0;33m
 NC = \033[0m # No Color
 
-.PHONY: help dev build-local run-local stop-local commit push sync deploy update logs status stop start restart ssh
+.PHONY: help dev build-local run-local stop-local commit push sync deploy deploy-local update logs status stop start restart ssh
 
 # По умолчанию показываем справку
 help:
@@ -39,6 +39,7 @@ help:
 	@echo "  $(YELLOW)Деплой на сервер:$(NC)"
 	@echo "    make sync         — синхронизировать файлы на сервер"
 	@echo "    make deploy       — пересобрать и запустить на сервере"
+	@echo "    make deploy-local  — собрать образ локально, скопировать на сервер и запустить (если на сервере нет места)"
 	@echo "    make update       — полный цикл: commit + push + sync + deploy"
 	@echo ""
 	@echo "  $(YELLOW)Управление сервером:$(NC)"
@@ -98,7 +99,23 @@ sync:
 
 deploy:
 	@echo "$(GREEN)🐳 Пересборка и запуск на сервере (podman)...$(NC)"
-	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && podman compose down && podman compose up -d --build"
+	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && podman compose down && podman rmi localhost/lova-to-do_app:latest --force 2>/dev/null; true && podman compose build --no-cache --build-arg BUILD_ID=$$(date +%s) && podman compose up -d"
+	@echo "$(GREEN)✅ Деплой завершён!$(NC)"
+	@echo "$(YELLOW)🌐 Сайт: http://$(SERVER_IP):3000$(NC)"
+
+# Деплой без сборки на сервере: образ собирается локально, копируется на сервер и запускается.
+# Использовать при «no space left on device» на сервере.
+IMAGE_TAR = lova-to-do_app.tar
+deploy-local: sync
+	@echo "$(GREEN)🔨 Сборка образа локально ($(CONTAINER_CMD))...$(NC)"
+	$(CONTAINER_CMD) build -f Dockerfile -t lova-to-do_app --build-arg BUILD_ID=$$(date +%s) .
+	@echo "$(GREEN)📦 Сохранение образа в tar...$(NC)"
+	$(CONTAINER_CMD) save -o $(IMAGE_TAR) lova-to-do_app
+	@echo "$(GREEN)📤 Копирование образа на сервер...$(NC)"
+	scp $(IMAGE_TAR) $(SERVER_USER)@$(SERVER_IP):$(SERVER_PATH)/
+	@echo "$(GREEN)🐳 Загрузка образа и запуск на сервере...$(NC)"
+	ssh $(SERVER_USER)@$(SERVER_IP) "cd $(SERVER_PATH) && podman load -i $(IMAGE_TAR) && rm -f $(IMAGE_TAR) && podman compose down && podman compose up -d --no-build"
+	@rm -f $(IMAGE_TAR)
 	@echo "$(GREEN)✅ Деплой завершён!$(NC)"
 	@echo "$(YELLOW)🌐 Сайт: http://$(SERVER_IP):3000$(NC)"
 

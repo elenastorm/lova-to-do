@@ -8,6 +8,7 @@ RUN npm ci
 
 FROM node:20-alpine AS builder
 WORKDIR /app
+ARG BUILD_ID=dev
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN mkdir -p public
@@ -18,6 +19,7 @@ ENV DATABASE_URL="file:/tmp/prisma-dev.db"
 RUN npx prisma generate
 RUN npx prisma migrate deploy
 RUN npm run build
+RUN echo "$BUILD_ID" > /app/build-id.txt
 
 FROM node:20-alpine AS runner
 WORKDIR /app
@@ -29,6 +31,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/build-id.txt ./build-id.txt
 
 RUN npm install -g prisma@6.19.2
 

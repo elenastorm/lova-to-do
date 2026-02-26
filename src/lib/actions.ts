@@ -42,7 +42,7 @@ export async function createItem(
     },
   });
 
-  revalidatePath("/");
+  revalidatePath("/love");
   return { success: true };
 }
 
@@ -58,13 +58,13 @@ export async function toggleComplete(id: string): Promise<void> {
     },
   });
 
-  revalidatePath("/");
+  revalidatePath("/love");
   revalidatePath(`/item/${id}`);
 }
 
 export async function deleteItem(id: string): Promise<void> {
   await prisma.todoItem.delete({ where: { id } }).catch(() => {});
-  revalidatePath("/");
+  revalidatePath("/love");
   revalidatePath(`/item/${id}`);
 }
 
@@ -109,7 +109,7 @@ export async function updateItem(
     },
   });
 
-  revalidatePath("/");
+  revalidatePath("/love");
   revalidatePath(`/item/${id}`);
   return { success: true };
 }

@@ -1,5 +1,6 @@
 services:
   app:
+    image: localhost/lova-to-do_app:latest
     build: .
     restart: always
     ports:
