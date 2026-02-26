@@ -87,7 +87,7 @@ push:
 
 sync:
 	@echo "$(GREEN)📦 Синхронизация файлов на сервер...$(NC)"
-	rsync -avz --progress \
+	rsync -avz --progress --delete \
 		--exclude 'node_modules' \
 		--exclude '.next' \
 		--exclude '.git' \
